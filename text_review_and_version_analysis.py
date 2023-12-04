@@ -5,7 +5,7 @@ import re
 from fuzzywuzzy import fuzz
 import pandas as pd
 import matplotlib.pyplot as plt
-from matplotlib.font_manager import FontProperties
+from matplotlib.font_manager import fontManager
 import streamlit as st
 import zipfile
 import base64
@@ -246,9 +246,9 @@ def version_analysis(xlsx_path):
     # 設置中文字體
     current_directory = os.path.dirname(os.path.abspath(__file__))
     font_path = os.path.join(current_directory, 'SimHei.ttf')
-    font_prop = FontProperties(fname=font_path)
-    plt.rcParams['font.sans-serif'] = ['SimHei']
-    plt.rcParams['axes.unicode_minus'] = False
+    fontManager.addfont(font_path) 
+    plt.rcParams['font.sans-serif']=['SimHei']
+    plt.rcParams['axes.unicode_minus']=False
 
     labels = list(result_dict.keys())
     values = list(result_dict.values())
