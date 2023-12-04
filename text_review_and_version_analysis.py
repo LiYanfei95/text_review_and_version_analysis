@@ -244,7 +244,8 @@ def version_analysis(xlsx_path):
 
     # 繪圖
     # 設置中文字體
-    font_path = 'SimHei.ttf'
+    current_directory = os.path.dirname(os.path.abspath(__file__))
+    font_path = os.path.join(current_directory, 'SimHei.ttf')
     font_prop = FontProperties(fname=font_path)
     plt.rcParams['font.family'] = font_prop.get_name()
 
