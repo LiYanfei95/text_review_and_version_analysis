@@ -10,7 +10,7 @@
 
 - streamlit 免費服務器運行
 
-  打開網址：
+  打開網址：<https://textreviewandversionanalysis-sszacedfatmtftzzuc9vss.streamlit.app/>
 
 **頁面樣式：**
 
