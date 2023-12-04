@@ -247,7 +247,8 @@ def version_analysis(xlsx_path):
     current_directory = os.path.dirname(os.path.abspath(__file__))
     font_path = os.path.join(current_directory, 'SimHei.ttf')
     font_prop = FontProperties(fname=font_path)
-    plt.rcParams['font.family'] = font_prop.get_name()
+    plt.rcParams['font.sans-serif'] = ['SimHei']
+    plt.rcParams['axes.unicode_minus'] = False
 
     labels = list(result_dict.keys())
     values = list(result_dict.values())
