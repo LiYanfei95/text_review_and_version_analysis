@@ -1,4 +1,5 @@
 import os
+import shutil
 import io
 import re
 from fuzzywuzzy import fuzz
@@ -6,6 +7,9 @@ import pandas as pd
 import matplotlib.pyplot as plt
 from matplotlib.font_manager import FontProperties
 import streamlit as st
+import zipfile
+import base64
+
 
 # 共同代碼
 def split_sentences(content):
@@ -217,7 +221,8 @@ def content_source(book_dic,output_folder_path):
         file_name = k + '.xlsx'
         out_put_file_path = os.path.join(output_folder_path, file_name)
         df.to_excel(out_put_file_path, index=False)
-    st.write(f'結果已導出在“{output_folder_path}”中。')
+
+
 
 def version_analysis(xlsx_path):
     '''
@@ -260,16 +265,42 @@ def version_analysis(xlsx_path):
     plt.savefig(image_path, bbox_inches='tight')
     st.pyplot(fig)
 
+def zip_folder(folder_path, zip_path):
+    # 打包壓縮文件夾中的xlsx和png文件
+    with zipfile.ZipFile(zip_path, 'w', zipfile.ZIP_DEFLATED) as zipf:
+        for file in os.listdir(folder_path):
+            file_path = os.path.join(folder_path, file)
+            if os.path.isfile(file_path) and (file.endswith('.xlsx') or file.endswith('.png')):
+                zipf.write(file_path, file)
+def create_download_link(zip_file_path, link_text="下載分析結果數據"):
+    with open(zip_file_path, "rb") as file:
+        zip_content = file.read()
+    zip_base64 = base64.b64encode(zip_content).decode()
+    href = f'<a href="data:application/zip;base64,{zip_base64}" download="版本分析結果.zip">{link_text}</a>'
+    return href
+
 def version_analysis_show():
     st.subheader("版本分析")
     book_dic = split_sentences_plus()
-    output_folder_path = st.text_input("請輸入分析結果導出的文件夾地址（按Enter執行），此文件夾需是空文件夾：")
-    if output_folder_path:
+    folder_name = 'out_put'
+    output_folder_path = os.path.join('.', folder_name)
+    if os.path.exists(output_folder_path):
+        # 如果已經存在輸出文件夾，先刪除以便後續創建空的該文件夾
+        shutil.rmtree(output_folder_path)
+    os.makedirs(output_folder_path)
+    if book_dic:
         content_source(book_dic,output_folder_path) 
         for file_name in os.listdir(output_folder_path):
             if file_name.endswith('.xlsx'):
                 file_path = os.path.join(output_folder_path, file_name)
                 version_analysis(file_path)
+        zip_filename = 'output.zip'
+        zip_path = os.path.join(output_folder_path, zip_filename)
+        zip_folder(output_folder_path, zip_path)
+        download_link = create_download_link(zip_path)
+        st.markdown(download_link, unsafe_allow_html=True)
+                
+    
 
 # 主函數
 def main():
