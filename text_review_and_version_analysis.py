@@ -88,15 +88,21 @@ def similar_char_index(input_sentence, sentence):
     start_dic = {}
     for i in segment_start_indices:
         if i + 2 < sentenc_len: # 索引上限
-            pattern = sentence[i] + '.'
-            pattern = pattern + sentence[i+2]
+            if is_punctuation(sentence[i+2]): #如果是標點符號就關注下一個字符
+                if i + 3 < sentenc_len:
+                    pattern = sentence[i] + '.' + sentence[i+3]
+            else:
+                pattern = sentence[i] + '.' + sentence[i+2]
             start_dic[i] = pattern
 
     end_dic = {}
     for i in segment_end_indices:
         if i - 2 > -1: # 索引下限
-            pattern = sentence[i-2] + '.'
-            pattern = pattern + sentence[i]
+            if is_punctuation(sentence[i-2]):#如果是標點符號就關注下一個字符
+                if i - 3 > -1:
+                     pattern = sentence[i-3] + '.' + sentence[i]
+            else:
+                pattern = sentence[i-2] + '.' + sentence[i]
             end_dic[i] = pattern
 
     all_pattern = {**start_dic, **end_dic}
